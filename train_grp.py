@@ -220,6 +220,8 @@ print("use epsilon run-up       : ", args.eps_runup)
 print("number of anchors        : ", args.N)
 print("number of predictions    : ", args.T)
 print("delta t                  : ", args.dt)
+print("state dimension          : ", num_inputs)
+print("action dimension         : ", num_actions)
 print("hidden size              : ", args.hidden_size)
 print("=============================================")
 
