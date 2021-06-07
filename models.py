@@ -115,8 +115,9 @@ class Policy(nn.Module):
 
 
 class Value(nn.Module):
-    def __init__(self, num_inputs):
+    def __init__(self, num_inputs, device):
         super(Value, self).__init__()
+        self.device = device
         self.affine1 = nn.Linear(num_inputs, 64)
         self.affine2 = nn.Linear(64, 64)
         self.value_head = nn.Linear(64, 1)
@@ -132,8 +133,9 @@ class Value(nn.Module):
 
 
 class GRPNet(nn.Module):
-    def __init__(self, state_dim, action_dim, hidden_size, n_anchors, T, dt, eps_runup):
+    def __init__(self, state_dim, action_dim, hidden_size, n_anchors, T, dt, eps_runup, device):
         super(GRPNet, self).__init__()
+        self.device = device
         self.D = state_dim
         self.A = action_dim
         self.H = hidden_size
@@ -145,7 +147,7 @@ class GRPNet(nn.Module):
         self.anchors = nn.Linear(self.H, self.N*self.A)
         self.dt = dt
         self.eps = 0.5 * dt
-        self.time_array = torch.DoubleTensor([i * self.dt for i in range(1, self.T+1)]).unsqueeze(1)
+        self.time_array = torch.DoubleTensor([i * self.dt for i in range(1, self.T+1)]).unsqueeze(1).to(self.device)
 
         self.module_list_current = [self.affine1, self.affine2, self.times, self.anchors]
 
@@ -162,9 +164,9 @@ class GRPNet(nn.Module):
 
     def solve(self, times, anchors, a, da, is_runup):
         if is_runup:
-            times = torch.cat((times, torch.FloatTensor([0, -self.eps]).unsqueeze(1)))
-            anchors = torch.cat((anchors, torch.FloatTensor([a, a- self.eps * da]).unsqueeze(1)))
-        gpr = GPR()
+            times = torch.cat((times, torch.FloatTensor([0, -self.eps]).unsqueeze(1))).to(self.device)
+            anchors = torch.cat((anchors, torch.FloatTensor([a, a- self.eps * da]).unsqueeze(1))).to(self.device)
+        gpr = GPR(self.device)
         gpr.set_hyperparameter(0.1,0.1,0.1)
         gpr.load_data(times, anchors)
         gpr.optimize()

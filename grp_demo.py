@@ -6,10 +6,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 gpr = GPR()
-gpr.max_step = 100000
+gpr.max_step = 10000
 
-n = 10 # n >=2
+n = 6 # n >=2
 m = 1000
+k = 10
 
 dt = 3/(n-1)
 
@@ -49,9 +50,9 @@ x_mean = anchors[:,0].mean()
 print(x_mean)
 gpr.load_data(times, anchors[:,0])
 gpr.optimize()
-mu1, cov1 = gpr.predict_posterior(time_array)
+mu1, cov1 = gpr.predict_posterior(time_array, times, anchors[:,0])
 print(cov1)
-x = np.random.multivariate_normal(mu1.detach().numpy(), cov1.detach().numpy(), 10)
+x = np.random.multivariate_normal(mu1.detach().numpy(), cov1.detach().numpy(), k)
 print(x)
 
 # for y-axis
@@ -59,10 +60,10 @@ gpr.set_hyperparameter(0.1,0.1,0.1)
 y_mean = anchors[:,0].mean()
 gpr.load_data(times, anchors[:,1])
 gpr.optimize()
-mu2, cov2 = gpr.predict_posterior(time_array)
-y = np.random.multivariate_normal(mu2.detach().numpy(), cov2.detach().numpy(), 10)
+mu2, cov2 = gpr.predict_posterior(time_array, times, anchors[:,1])
+y = np.random.multivariate_normal(mu2.detach().numpy(), cov2.detach().numpy(), k)
 
-
-plt.scatter(x, y, alpha=0.5)
+colors = [[i]*m for i in range(k)]
+plt.scatter(x, y, alpha=0.5, s = 1, c= colors)
 plt.scatter(anchors.detach().numpy()[:,0], anchors.detach().numpy()[:,1], s=5, color='red')
 plt.show()

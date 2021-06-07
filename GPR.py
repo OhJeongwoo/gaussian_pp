@@ -2,10 +2,11 @@ import torch
 import numpy as np  
 
 class GPR():
-    def __init__(self):
-        self.l = torch.tensor(1e1, requires_grad=True)
-        self.sigma_f = torch.tensor(1e0, requires_grad=True)
-        self.sigma_y = torch.tensor(1e-4, requires_grad=True)
+    def __init__(self, device):
+        self.device = device
+        self.l = torch.tensor(1e1, requires_grad=True).to(self.device)
+        self.sigma_f = torch.tensor(1e0, requires_grad=True).to(self.device)
+        self.sigma_y = torch.tensor(1e-4, requires_grad=True).to(self.device)
         self.reset()
         self.prev_loss = 0
         self.max_step = 20
@@ -68,7 +69,7 @@ class GPR():
     def optimize(self):
         for i in range(self.max_step):
             K = self.GaussianRBF(self.X_train_tensor, self.X_train_tensor)
-            K = K + ((self.sigma_y+1e-10)**2) * torch.eye(len(self.X_train_tensor))
+            K = K + ((self.sigma_y+1e-10)**2) * torch.eye(len(self.X_train_tensor)).to(self.device)
             loss = 0.5*torch.matmul(self.Y_train_tensor.t(), torch.matmul(K.inverse(), self.Y_train_tensor)) + 0.5*torch.log(torch.det(K))
             self.optimizer.zero_grad()
             loss.backward(retain_graph=True)
