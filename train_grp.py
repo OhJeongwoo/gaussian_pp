@@ -74,7 +74,7 @@ parser.add_argument('--T', type=int, default=5, metavar='N',
 parser.add_argument('--max-ep-len', type=int, default=1e2, metavar='N',
                     help='maximum length of episode')
 parser.add_argument('--algo-type', default='grp', metavar='N')
-parser.add_argument('--eps-runup', type=bool, default=True, metavar='N')
+parser.add_argument('--eps-runup', type=bool, default=False, metavar='N')
 parser.add_argument('--exp-name', type=str, default='001', metavar='N')
 parser.add_argument('--use-entropy-loss', type=bool, default=True, metavar='N')
 args = parser.parse_args()
@@ -331,7 +331,7 @@ for i_episode in range(1, 1001):
         record['success'] = info['success']
         record['len'] = t
         scenario.append(record)
-        
+    
     total_steps += num_steps
     records['scenario'] = scenario
     records['n_scenario'] = len(scenario)
