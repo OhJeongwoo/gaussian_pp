@@ -7,6 +7,7 @@ import os
 import json
 import psutil
 import time
+import random
 
 import gym
 import numpy as np
@@ -27,7 +28,8 @@ from models import Policy, Value, ActorCritic, GRPNet
 from replay_memory import Memory
 from running_state import ZFilter
 
-from metaworld.benchmarks import ML1
+# from metaworld.benchmarks import ML1
+import metaworld
 
 # from utils import *
 
@@ -69,7 +71,7 @@ parser.add_argument('--N', type=int, default=10, metavar='N',
                     help='number of anchors')
 parser.add_argument('--T', type=int, default=5, metavar='N',
                     help='number of predictions')
-parser.add_argument('--max-ep-len', type=int, default=1e3, metavar='N',
+parser.add_argument('--max-ep-len', type=int, default=1e2, metavar='N',
                     help='maximum length of episode')
 parser.add_argument('--algo-type', default='grp', metavar='N')
 parser.add_argument('--eps-runup', type=bool, default=True, metavar='N')
@@ -79,7 +81,11 @@ args = parser.parse_args()
 
 #env = gym.make(args.env_name)
 #env_name = "pick-place-v1"
-env = ML1.get_train_tasks(args.env_name)
+ml1 = metaworld.ML1(args.env_name)
+env = ml1.train_classes[args.env_name]()  # Create an environment with task `pick_place`
+task = random.choice(ml1.train_tasks)
+env.set_task(task)  # Set task
+# env = ML1.get_train_tasks(args.env_name)
 num_inputs = env.observation_space.shape[0]
 num_actions = env.action_space.shape[0]
 print(args)
