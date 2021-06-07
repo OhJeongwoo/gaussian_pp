@@ -15,9 +15,9 @@ class GPR():
         
 
     def load_data(self, X_train_tensor, Y_train_tensor):
-        self.X_train_tensor = X_train_tensor
-        self.Y_train_tensor = Y_train_tensor
-        self.Y_train_mean = Y_train_tensor.mean()
+        self.X_train_tensor = X_train_tensor.detach()
+        self.Y_train_tensor = Y_train_tensor.detach()
+        self.Y_train_mean = Y_train_tensor.mean().detach()
         self.Y_train_tensor = self.Y_train_tensor - self.Y_train_mean
         
         
@@ -41,13 +41,18 @@ class GPR():
         dist_matrix = (term1 - 2*term2 + term3)
         return (self.sigma_f**2) * torch.exp((-1/(self.l**2)) * dist_matrix)
 
-    def predict_posterior(self, X, X_train, Y_train):
-        K11 = self.GaussianRBF(X_train, X_train) + self.sigma_y**2 * torch.eye(len(X_train))
-        K21 = self.GaussianRBF(X, X_train)
-        K12 = self.GaussianRBF(X_train, X) # Note, K12 = K21.T (transposed)
+    def predict_posterior(self, X, X_train_tensor, Y_train_tensor):
+        self.l = self.l.detach()
+        self.sigma_f = self.sigma_f.detach()
+        self.sigma_y = self.sigma_y.detach()
+        Y_train_mean = Y_train_tensor.mean()
+        Y_train_tensor = Y_train_tensor - Y_train_mean
+        K11 = self.GaussianRBF(X_train_tensor, X_train_tensor) + self.sigma_y**2 * torch.eye(len(X_train_tensor))
+        K21 = self.GaussianRBF(X, X_train_tensor)
+        K12 = self.GaussianRBF(X_train_tensor, X) # Note, K12 = K21.T (transposed)
         K22 = self.GaussianRBF(X, X)
         K11_inv = torch.linalg.inv(K11)
-        mu = torch.matmul(K21, torch.matmul(K11_inv, Y_train)) + self.Y_train_mean
+        mu = torch.matmul(K21, torch.matmul(K11_inv, Y_train_tensor)) + Y_train_mean
         cov = K22 - torch.matmul(K21, torch.matmul(K11_inv, K12))
         return mu, cov
 

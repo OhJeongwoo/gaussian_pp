@@ -151,7 +151,7 @@ class GRPNet(nn.Module):
 
         self.module_list_old = [None]*len(self.module_list_current) #self.affine1_old, self.affine2_old, self.action_mean_old, self.action_log_std_old]
         
-        self.gpr = GPR()
+        #self.gpr = GPR()
         self.eps_runup = eps_runup
 
         self.backup()
@@ -164,10 +164,11 @@ class GRPNet(nn.Module):
         if is_runup:
             times = torch.cat((times, torch.FloatTensor([0, -self.eps]).unsqueeze(1)))
             anchors = torch.cat((anchors, torch.FloatTensor([a, a- self.eps * da]).unsqueeze(1)))
-        self.gpr.set_hyperparameter(0.1,0.1,0.1)
-        self.gpr.load_data(times, anchors)
-        self.gpr.optimize()
-        mu, cov = self.gpr.predict_posterior(self.time_array, times, anchors-anchors.mean())
+        gpr = GPR()
+        gpr.set_hyperparameter(0.1,0.1,0.1)
+        gpr.load_data(times, anchors)
+        gpr.optimize()
+        mu, cov = gpr.predict_posterior(self.time_array, times, anchors)
 
         return mu, cov
 
