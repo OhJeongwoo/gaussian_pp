@@ -167,7 +167,7 @@ class GRPNet(nn.Module):
         self.gpr.set_hyperparameter(0.1,0.1,0.1)
         self.gpr.load_data(times, anchors)
         self.gpr.optimize()
-        mu, cov = self.gpr.predict_posterior(self.time_array, times, anchors)
+        mu, cov = self.gpr.predict_posterior(self.time_array, times, anchors-anchors.mean())
 
         return mu, cov
 
