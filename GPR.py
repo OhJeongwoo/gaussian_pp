@@ -8,7 +8,7 @@ class GPR():
         self.sigma_y = torch.tensor(1e-4, requires_grad=True)
         self.reset()
         self.prev_loss = 0
-        self.max_step = 10
+        self.max_step = 20
         self.threshold = 1e-3
         
 

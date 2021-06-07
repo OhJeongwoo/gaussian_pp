@@ -27,6 +27,7 @@ from torch.distributions.multivariate_normal import MultivariateNormal
 from models import Policy, Value, ActorCritic, GRPNet
 from replay_memory import Memory
 from running_state import ZFilter
+import wandb
 
 # from metaworld.benchmarks import ML1
 import metaworld
@@ -76,9 +77,11 @@ parser.add_argument('--max-ep-len', type=int, default=1e2, metavar='N',
 parser.add_argument('--algo-type', default='grp', metavar='N')
 parser.add_argument('--eps-runup', type=bool, default=True, metavar='N')
 parser.add_argument('--exp-name', type=str, default='001', metavar='N')
-parser.add_argument('--use-entropy-loss', type=bool, default=True, metavar='N')
+parser.add_argument('--use-entropy-loss', type=bool, default=False, metavar='N')
+
 args = parser.parse_args()
 
+wandb.init(project = "test", reinit = True, name = args.exp_name)
 #env = gym.make(args.env_name)
 #env_name = "pick-place-v1"
 ml1 = metaworld.ML1(args.env_name)
@@ -347,6 +350,7 @@ for i_episode in range(1, 1001):
     if i_episode % args.log_interval == 0:
         print('[{:.2f}] Episode {}\tLast reward: {}\tAverage reward {:.2f}\tTotal steps {}'.format(
             time.time() - start_time, i_episode, reward_sum, reward_batch, total_steps))
+        wandb.log({"reward": reward_batch})
         # record = {'reward': reward_batch, 'n_episode': i_episode, 'timestamp': total_steps}
         checkdir = 'results/' + args.algo_type + '/' + args.env_name + '/' + args.exp_name + '/logs/'
         weight_path = 'results/' + args.algo_type + '/' + args.env_name + '/' + args.exp_name + '/weights/'
