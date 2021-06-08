@@ -1,5 +1,9 @@
 experiment schedule
 
+-- summary deadline         : 2021.06.11
+-- presentation deadline    : 2021.06.16
+-- final report deadline    : 2021.06.18
+
 
 1. eps run-up validation test
 
@@ -28,14 +32,14 @@ N
 
        COM           START                END
 
-AA   local02    2021.06.07 16:30    2021.06.08 09:00 (expected)   
-AB   local02    2021.06.07 16:30    2021.06.08 03:00 (expected)   
-AC   cpslab4    2021.06.07 17:00    2021.06.08 03:00 (expected)    
-BA   cpslab4    2021.06.07 17:00    2021.06.08 15:30 (expected)    
-BB    navi2     2021.06.07 18:00    2021.06.08 05:00 (expected)   
-BC    navi2     2021.06.07 18:00    2021.06.08 02:30 (expected)   
-CA   local02    2021.06.08 07:00    2021.06.08 22:00 (expected)   
-CB   local02    2021.06.08 07:00    2021.06.08 22:00 (expected)   
+AA   local02    2021.06.08 16:30    2021.06.09 09:00 (expected)   
+AB   local02    2021.06.08 16:30    2021.06.09 03:00 (expected)   
+AC   cpslab4    2021.06.08 17:00    2021.06.09 03:00 (expected)    
+BA   cpslab4    2021.06.08 17:00    2021.06.09 15:30 (expected)    
+BB    navi2     2021.06.08 19:00    2021.06.09 06:00 (expected)   
+BC    navi2     2021.06.08 19:00    2021.06.09 03:30 (expected)   
+CA   local02    2021.06.09 07:00    2021.06.09 22:00 (expected)   
+CB   local02    2021.06.09 07:00    2021.06.09 22:00 (expected)   
 CC   cpslab4    
 
 
@@ -73,16 +77,16 @@ faucet       CA         CB          CC          CD
        
        COM           START                END
 
-AA    raichu    2021.06.07 15:00    2021.06.08 00:00
-AB    raichu    2021.06.07 15:00    2021.06.07 18:00
+AA    raichu    2021.06.08 15:00    
+AB    raichu    2021.06.08 15:00    2021.06.09 00:30
 AC    
 AD
-BA    raichu    2021.06.08 00:00    2021.06.08 09:00 
-BB    raichu    2021.06.07 19:00    2021.06.07 22:00
+BA    raichu     
+BB    raichu    2021.06.09 00:30    2021.06.09 05:00
 BC
 BD
-CA    raichu    2021.06.07 22:00    2021.06.08 07:00
-CB    raichu    2021.06.08 08:00    2021.06.08 11:00
+CA    raichu    
+CB    raichu    
 CC
 CD
 
