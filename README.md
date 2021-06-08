@@ -28,14 +28,14 @@ N
 
        COM           START                END
 
-AA   local02    2021.06.07 16:30    2021.06.08 09:00 (expected)
-AB   local02    2021.06.07 16:30    2021.06.08 03:00 (expected)
+AA   local02    2021.06.07 16:30    2021.06.08 09:00 (expected)   
+AB   local02    2021.06.07 16:30    2021.06.08 03:00 (expected)   
 AC   cpslab4    2021.06.07 17:00    2021.06.08 03:00 (expected)    
-BA   cpslab4    2021.06.07 17:00    2021.06.08 15:30 (expected)
-BB    navi2     2021.06.07 18:00
-BC    navi2     2021.06.07 18:00
-CA   local02    2021.06.08 07:00    2021.06.08 22:00 (expected)
-CB   local02    2021.06.08 07:00    2021.06.08 22:00 (expected)
+BA   cpslab4    2021.06.07 17:00    2021.06.08 15:30 (expected)    
+BB    navi2     2021.06.07 18:00    2021.06.08 05:00 (expected)   
+BC    navi2     2021.06.07 18:00    2021.06.08 02:30 (expected)   
+CA   local02    2021.06.08 07:00    2021.06.08 22:00 (expected)   
+CB   local02    2021.06.08 07:00    2021.06.08 22:00 (expected)   
 CC   cpslab4    
 
 
