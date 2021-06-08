@@ -372,7 +372,7 @@ for i_episode in range(1, 10001):
         with open(savepath, 'w') as fp:
             json.dump(records, fp, indent=4)
         torch.save(policy_net.state_dict(), weight_path + 'actor/%.6i.pth' % i_episode)
-        torch.save(value_net.statie_dict(), weight_path + 'critic/%.6i.pth' % i_episode)
+        torch.save(value_net.state_dict(), weight_path + 'critic/%.6i.pth' % i_episode)
 
     if total_steps > args.max_timesteps:
         break
