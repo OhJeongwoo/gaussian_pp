@@ -77,13 +77,12 @@ parser.add_argument('--max-ep-len', type=int, default=1e2, metavar='N',
 parser.add_argument('--algo-type', default='grp', metavar='N')
 parser.add_argument('--eps-runup', type=bool, default=True, metavar='N')
 parser.add_argument('--exp-name', type=str, default='001', metavar='N')
-parser.add_argument('--use-entropy-loss', type=bool, default=False, metavar='N')
+parser.add_argument('--use-entropy-loss', type=bool, default=True, metavar='N')
 
 args = parser.parse_args()
 
-wandb.init(project = "test", reinit = True, name = args.exp_name)
+wandb.init(project = "deeprl", reinit = True, name = args.exp_name)
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
 #env = gym.make(args.env_name)
 #env_name = "pick-place-v1"
 ml1 = metaworld.ML1(args.env_name)
@@ -105,15 +104,15 @@ torch.manual_seed(args.seed)
 #     value_net = Value(num_inputs)
 #     opt_policy = optim.Adam(policy_net.parameters(), lr=0.001)
 #     opt_value = optim.Adam(value_net.parameters(), lr=0.001)
-policy_net = GRPNet(num_inputs, num_actions, args.hidden_size, args.N, args.T, args.dt, args.eps_runup, device).to(device)
-value_net =  Value(num_inputs, device).to(device)
+policy_net = GRPNet(num_inputs, num_actions, args.hidden_size, args.N, args.T, args.dt, args.eps_runup)
+value_net =  Value(num_inputs)
 opt_policy = optim.Adam(policy_net.parameters(), lr=0.001)
 opt_value = optim.Adam(value_net.parameters(), lr=0.001)
 
 def select_actions(state, a, da):
-    state =  torch.from_numpy(state).unsqueeze(0).to(device)
-    a = torch.from_numpy(a).unsqueeze(0).to(device)
-    da = torch.from_numpy(da).unsqueeze(0).to(device)
+    state =  torch.from_numpy(state).unsqueeze(0)
+    a = torch.from_numpy(a).unsqueeze(0)
+    da = torch.from_numpy(da).unsqueeze(0)
     action_mu, action_cov = policy_net(Variable(state), a, da)
     action_mu = action_mu.squeeze(0)
     action_cov = action_cov.squeeze(0)
@@ -151,16 +150,16 @@ def multivariative_normal_entropy(mu, cov):
     return dist.entropy()
 
 def update_params(batch):
-    rewards = torch.Tensor(batch.reward).to(device)
-    masks = torch.Tensor(batch.mask).to(device)
-    actions = torch.Tensor(np.array(batch.action)).to(device)
-    a = torch.Tensor(np.array(batch.a)).to(device)
-    da = torch.Tensor(np.array(batch.da)).to(device)
-    states = torch.Tensor(batch.state).to(device)
+    rewards = torch.Tensor(batch.reward)
+    masks = torch.Tensor(batch.mask)
+    actions = torch.Tensor(np.array(batch.action))
+    a = torch.Tensor(np.array(batch.a))
+    da = torch.Tensor(np.array(batch.da))
+    states = torch.Tensor(batch.state)
     values = value_net(Variable(states))
-    returns = torch.Tensor(actions.size(0),1).to(device)
-    deltas = torch.Tensor(actions.size(0),1).to(device)
-    advantages = torch.Tensor(actions.size(0),1).to(device)
+    returns = torch.Tensor(actions.size(0),1)
+    deltas = torch.Tensor(actions.size(0),1)
+    advantages = torch.Tensor(actions.size(0),1)
 
     prev_return = 0
     prev_value = 0
