@@ -23,6 +23,7 @@ from models import Policy, Value, ActorCritic
 from replay_memory import Memory
 from running_state import ZFilter
 
+import metaworld
 from metaworld.benchmarks import ML1
 
 # from utils import *
@@ -57,11 +58,19 @@ parser.add_argument('--clip-epsilon', type=float, default=0.2, metavar='N',
                     help='Clipping for PPO grad')
 parser.add_argument('--use-joint-pol-val', action='store_true',
                     help='whether to use combined policy and value nets')
+parser.add_argument('--max-ep-len', type=int, default=1e2, metavar='N',
+                    help='maximum length of episode')
+parser.add_argument('--algo-type', default='ppo', metavar='N')
+parser.add_argument('--exp-name', type=str, default='imitation', metavar='N')
+
 args = parser.parse_args()
 
 #env = gym.make(args.env_name)
 # env_name = "pick-place-v1"
-env = ML1.get_train_tasks(args.env_name)
+env = ML1.get_train_tasks(args.env_name)  # Create an environment with task `pick_place`
+tasks = env.sample_tasks(1)  # Sample a task (in this case, a goal variation)
+env.set_task(tasks[0])  # Set task
+# env = ML1.get_train_tasks(args.env_name)
 num_inputs = env.observation_space.shape[0]
 num_actions = env.action_space.shape[0]
 print(args)
@@ -220,31 +229,37 @@ total_steps = 0
 
 for i_episode in range(1, 1001):
     memory = Memory()
+    records = {}
+    records['i_episode'] = i_episode
+    scenario = []
 
     num_steps = 0
     reward_batch = 0
     num_episodes = 0
-    state_array = []
-    action_array = []
-    reward_array = []
+
     while num_steps < args.batch_size:
         state = env.reset()
         state = running_state(state)
 
+        record = {}
+        state_array = []
+        action_array = []
+        reward_array = []
+        
         reward_sum = 0
-        scenario_states = []
-        scenario_actions = []
-        scenario_rewards = []
-        for t in range(10000): # Don't infinite loop while learning
+        t = 0
+        success = False
+
+        while(True): # Don't infinite loop while learning
             if args.use_joint_pol_val:
                 action = select_action_actor_critic(state)
             else:
                 action = select_action(state)
             action = action.data[0].numpy()
-            next_state, reward, done, _ = env.step(action)
-            scenario_states.append(state.tolist())
-            scenario_actions.append(action.tolist())
-            scenario_rewards.append(reward)
+            next_state, reward, done, info = env.step(action)
+            state_array.append(state.tolist())
+            action_array.append(action.tolist())
+            reward_array.append(reward)
             reward_sum += reward
 
             next_state = running_state(next_state)
@@ -259,15 +274,28 @@ for i_episode in range(1, 1001):
                 env.render()
             if done:
                 break
+            if t > args.max_ep_len:
+                break
+            if info['success'] > 0.0:
+                success = True
 
             state = next_state
-        num_steps += (t-1)
+        num_steps += t
         num_episodes += 1
         reward_batch += reward_sum
-        state_array.append(scenario_states)
-        action_array.append(scenario_actions)
-        reward_array.append(scenario_rewards)
+        record['state'] = state_array
+        record['action'] = action_array
+        record['reward'] = reward_array
+        if success:
+            record['success'] = 1.0
+        else :
+            record['success'] = 0.0
+        record['len'] = t
+        scenario.append(record)
     total_steps += num_steps
+    records['scenario'] = scenario
+    records['n_scenario'] = len(scenario)
+    records['timestamp'] = total_steps
     
     reward_batch /= num_episodes
     batch = memory.sample()
@@ -280,8 +308,8 @@ for i_episode in range(1, 1001):
         print('Episode {}\tLast reward: {}\tAverage reward {:.2f}\tTotal steps {}'.format(
             i_episode, reward_sum, reward_batch, total_steps))
         record = {'reward': reward_batch, 'n_episode': i_episode, 'timestamp': total_steps, 'states': state_array, 'actions': action_array, 'rewards': reward_array}
-        checkdir = 'results/'+args.env_name+'/logs/'
-        weight_path = 'results/'+args.env_name+'/weights/'
+        checkdir = 'results/' + args.algo_type + '/' + args.env_name + '/' + args.exp_name + '/logs/'
+        weight_path = 'results/' + args.algo_type + '/' + args.env_name + '/' + args.exp_name + '/weights/'
         if not os.path.exists(checkdir):
             os.makedirs(checkdir)
         if not os.path.exists(weight_path + 'actor/'):
@@ -291,7 +319,7 @@ for i_episode in range(1, 1001):
         
         savepath = os.path.join(checkdir, '%.6i.json'%i_episode)
         with open(savepath, 'w') as fp:
-            json.dump(record, fp, indent=4)
-        torch.save(policy_net.state_dict(), weight_path+'actor/%.6i.pth'%i_episode)
-        torch.save(value_net.state_dict(), weight_path+'critic/%.6i.pth'%i_episode)
-    
+            json.dump(records, fp, indent=4)
+        torch.save(policy_net.state_dict(), weight_path + 'actor/%.6i.pth' % i_episode)
+        torch.save(value_net.state_dict(), weight_path + 'critic/%.6i.pth' % i_episode)
+
