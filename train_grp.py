@@ -316,7 +316,9 @@ for i_episode in range(1, 10001):
                 t += 1
                 mask = 1
                 
-                
+                if info['success'] > 0.0:
+                    success = True
+
                 if done:
                     mask = 0
                     break
@@ -340,7 +342,10 @@ for i_episode in range(1, 10001):
         record['action'] = action_array
         record['reward'] = reward_array
         record['ep_rewards'] = reward_sum
-        record['success'] = info['success']
+        if success:
+            record['success'] = 1.0
+        else :
+            record['success'] = 0.0
         record['len'] = t
         scenario.append(record)
     
