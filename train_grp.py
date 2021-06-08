@@ -31,7 +31,7 @@ import wandb
 
 # from metaworld.benchmarks import ML1
 import metaworld
-
+from metaworld.benchmarks import ML1
 # from utils import *
 
 start_time = time.time()
@@ -78,6 +78,7 @@ parser.add_argument('--algo-type', default='grp', metavar='N')
 parser.add_argument('--eps-runup', type=bool, default=True, metavar='N')
 parser.add_argument('--exp-name', type=str, default='001', metavar='N')
 parser.add_argument('--use-entropy-loss', type=bool, default=True, metavar='N')
+parser.add_argument('--max-timesteps', type=int, default=3e6, metavar='N')
 
 args = parser.parse_args()
 
@@ -85,11 +86,14 @@ wandb.init(project = "deeprl", reinit = True, name = args.exp_name)
 
 #env = gym.make(args.env_name)
 #env_name = "pick-place-v1"
-ml1 = metaworld.ML1(args.env_name)
-env = ml1.train_classes[args.env_name]()  # Create an environment with task `pick_place`
-task = random.choice(ml1.train_tasks)
-env.set_task(task)  # Set task
+#ml1 = metaworld.ML1(args.env_name)
+#env = ml1.train_classes[args.env_name]()  # Create an environment with task `pick_place`
+#task = random.choice(ml1.train_tasks)
+#env.set_task(task)  # Set task
 # env = ML1.get_train_tasks(args.env_name)
+env = ML1.get_train_tasks(args.env_name)  # Create an environment with task `pick_place`
+tasks = env.sample_tasks(1)  # Sample a task (in this case, a goal variation)
+env.set_task(tasks[0])  # Set task
 num_inputs = env.observation_space.shape[0]
 num_actions = env.action_space.shape[0]
 print(args)
@@ -214,6 +218,7 @@ print("environment name         : ", args.env_name)
 print("algorithm type           : ", args.algo_type)
 print("seed number              : ", args.seed)
 print("batch size               : ", args.batch_size)
+print("maximum timesteps        : ", args.max_timesteps)
 print("maximum episode length   : ", args.max_ep_len)
 print("gamma                    : ", args.gamma)
 print("tau                      : ", args.tau)
@@ -238,6 +243,7 @@ summary['env_name'] = args.env_name
 summary['algo_type'] = args.algo_type
 summary['seed'] = args.seed
 summary['batch_size'] = args.batch_size
+summary['max_timesteps'] = args.max_timesteps
 summary['max_ep_len'] = args.max_ep_len
 summary['gamma'] = args.gamma
 summary['tau'] = args.tau
@@ -261,7 +267,7 @@ episode_lengths = []
 
 total_steps = 0
 
-for i_episode in range(1, 1001):
+for i_episode in range(1, 10001):
     memory = Memory()
     records = {}
     records['i_episode'] = i_episode
@@ -366,4 +372,7 @@ for i_episode in range(1, 1001):
         with open(savepath, 'w') as fp:
             json.dump(records, fp, indent=4)
         torch.save(policy_net.state_dict(), weight_path + 'actor/%.6i.pth' % i_episode)
-        torch.save(value_net.state_dict(), weight_path + 'critic/%.6i.pth' % i_episode)
+        torch.save(value_net.statie_dict(), weight_path + 'critic/%.6i.pth' % i_episode)
+
+    if total_steps > args.max_timesteps:
+        break
