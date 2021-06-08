@@ -32,15 +32,15 @@ N
 
        COM           START                END
 
-AA   local02    2021.06.08 16:30    2021.06.09 09:00 (expected)   
-AB   local02    2021.06.08 16:30    2021.06.09 03:00 (expected)   
-AC   cpslab4    2021.06.08 17:00    2021.06.09 03:00 (expected)    
-BA   cpslab4    2021.06.08 17:00    2021.06.09 15:30 (expected)    
-BB    navi2     2021.06.08 19:00    2021.06.09 06:00 (expected)   
-BC    navi2     2021.06.08 19:00    2021.06.09 03:30 (expected)   
-CA   local02    2021.06.09 07:00    2021.06.09 22:00 (expected)   
-CB   local02    2021.06.09 07:00    2021.06.09 22:00 (expected)   
-CC   cpslab4    
+AA   local02    2021.06.08 16:30    2021.06.09 09:00 (wip)   
+AB   local02    2021.06.08 16:30    2021.06.09 03:00 (done)
+AC   cpslab4    2021.06.08 17:00    2021.06.09 03:00 (done)
+BA   cpslab4    2021.06.08 17:00    2021.06.09 15:30 (wip)    
+BB    navi2     2021.06.08 19:00    2021.06.09 06:00 (wip)   
+BC    navi2     2021.06.08 19:00    2021.06.09 03:30 (done)
+CA    navi2     2021.06.09 04:30    2021.06.10 00:00 (wip)   
+CB   cpslab4    2021.06.09 04:30    2021.06.09 19:30 (wip)   
+CC   local02    2021.06.09 04:30    2021.06.09 12:30 (wip)
 
 
 3. GRP-imitation
@@ -77,16 +77,16 @@ faucet       CA         CB          CC          CD
        
        COM           START                END
 
-AA    raichu    2021.06.08 15:00    
-AB    raichu    2021.06.08 15:00    2021.06.09 00:30
+AA    raichu    2021.06.08 15:00    2021.06.09 01:00 (done)
+AB    raichu    2021.06.08 15:00    2021.06.09 00:30 (done)
 AC    
 AD
-BA    raichu     
-BB    raichu    2021.06.09 00:30    2021.06.09 05:00
+BA    raichu    2021.06.09 01:00    2021.06.09 10:00 (wip)
+BB    raichu    2021.06.09 00:30    2021.06.09 04:30 (done)
 BC
 BD
-CA    raichu    
-CB    raichu    
+CA    raichu    2021.06.09 10:00    2021.06.09 13:00 (todo)
+CB    raichu    2021.06.09 04:30    2021.06.09 08:00 (wip)
 CC
 CD
 
