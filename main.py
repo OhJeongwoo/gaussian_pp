@@ -251,6 +251,7 @@ for i_episode in range(1, 1001):
         success = False
 
         while(True): # Don't infinite loop while learning
+            t += 1
             if args.use_joint_pol_val:
                 action = select_action_actor_critic(state)
             else:

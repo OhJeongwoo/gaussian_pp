@@ -11,7 +11,7 @@ class Memory(object):
     def __init__(self):
         self.memory = []
 
-    def push(self, state, action, mask, next_state, reward, a, da):
+    def push(self, state, action, mask, next_state, reward, a=None, da=None):
         """Saves a transition."""
         self.memory.append(Transition(state, action, mask, next_state, reward, a, da))
 
