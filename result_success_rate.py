@@ -2,13 +2,13 @@ import json
 import os
 import matplotlib.pyplot as plt
 
-N = 1000
+N = 1839
 
-# algo_type = 'grp'
-algo_type = 'ppo'
+algo_type = 'grp'
+#algo_type = 'ppo'
 env_name = 'push-v1'
-# exp_name = 'AAAA'
-exp_name = 'imitation'
+exp_name = 'AABA'
+# exp_name = 'imitation'
 
 project_path = os.path.abspath(os.path.dirname(__file__))
 result_path = project_path + '/results/'
@@ -30,7 +30,7 @@ for i in range(1,N+1):
             s += data['scenario'][j]['success']
         success.append(s)
 
-M = 3
+M = 5
 x = timestamp[M-1:N]
 y = [sum(success[i:i+M])/sum(attempts[i:i+M]) for i in range(N-M+1)]
 
