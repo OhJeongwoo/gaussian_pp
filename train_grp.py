@@ -82,7 +82,7 @@ parser.add_argument('--max-timesteps', type=int, default=3e6, metavar='N')
 
 args = parser.parse_args()
 
-wandb.init(project = "deeprl", reinit = True, name = args.exp_name)
+wandb.init(project = args.env_name, reinit = True, name = args.exp_name)
 
 #env = gym.make(args.env_name)
 #env_name = "pick-place-v1"
